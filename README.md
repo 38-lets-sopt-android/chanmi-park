@@ -1,2 +1,2 @@
 # LETS-SOPT-ANDROID_TEMPLATE
-LETS SOPT Android 과제 템플릿입니다~
+안드쫀쿠 쫀득쫀득
