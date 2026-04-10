@@ -15,6 +15,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.letssopt.core.designsystem.theme.LetsTheme
+import com.example.letssopt.core.util.noRippleClickable
 
 @Composable
 fun LetsButton(
@@ -27,7 +28,7 @@ fun LetsButton(
         modifier = modifier
             .clip(shape = RoundedCornerShape(8.dp))
             .background(color = if(enabled) LetsTheme.colors.primaryRed else LetsTheme.colors.surface)
-            .clickable(enabled = enabled, onClick = onClick)
+            .noRippleClickable(enabled = enabled, onClick = onClick)
             .padding(vertical = 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,

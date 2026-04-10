@@ -2,6 +2,8 @@ package com.example.letssopt.presentation.signup
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Patterns
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -22,6 +24,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -60,7 +63,10 @@ fun SignupScreen(
 ){
     var emailText by remember { mutableStateOf("") }
     var passwordText by remember { mutableStateOf("") }
+    var rePasswordText by remember { mutableStateOf("") }
 
+    val isSignupEnabled = emailText.isNotEmpty() && passwordText.isNotEmpty() && rePasswordText.isNotEmpty()
+    val context = LocalContext.current
     val scrollState = rememberScrollState()
 
     Column (
@@ -75,7 +81,7 @@ fun SignupScreen(
             text = "watcha",
             modifier = Modifier.fillMaxWidth(),
             color = LetsTheme.colors.primaryRed,
-            style = LetsTheme.typography.title.bold_24,
+            style = LetsTheme.typography.title.logo_36,
             textAlign = TextAlign.Center
         )
 
@@ -112,8 +118,8 @@ fun SignupScreen(
         LetsLabeledTextField(
             text = "비밀번호 확인",
             placeholder = "비밀번호를 다시 입력하세요",
-            value = passwordText,
-            onValueChange = { passwordText = it },
+            value = rePasswordText,
+            onValueChange = { rePasswordText = it },
             isPassword = true,
         )
 
@@ -122,10 +128,24 @@ fun SignupScreen(
         LetsButton(
             text = "회원가입",
             onClick = {
-                onSignupComplete(emailText, passwordText)
+                when{
+                    !Patterns.EMAIL_ADDRESS.matcher(emailText).matches() -> {
+                        Toast.makeText(context, "올바른 이메일 형식이 아닙니다", Toast.LENGTH_SHORT).show()
+                    }
+                    passwordText.length < 8 || passwordText.length > 12 -> {
+                        Toast.makeText(context, "비밀번호는 8자 이상, 12자 이하여야 합니다", Toast.LENGTH_SHORT).show()
+                    }
+                    passwordText != rePasswordText -> {
+                        Toast.makeText(context, "비밀번호가 일치하지 않습니다", Toast.LENGTH_SHORT).show()
+                    }
+                    else -> {
+                        onSignupComplete(emailText, passwordText)
+                        Toast.makeText(context, "회원가입이되었습니다", Toast.LENGTH_SHORT).show()
+                    }
+                }
             },
             modifier = Modifier.fillMaxWidth(),
-            enabled = true,
+            enabled = isSignupEnabled,
         )
     }
 }

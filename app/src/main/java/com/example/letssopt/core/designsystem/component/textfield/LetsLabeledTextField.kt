@@ -5,6 +5,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -24,9 +26,11 @@ fun LetsLabeledTextField(
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier,
     isPassword: Boolean = false,
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+    keyboardActions: KeyboardActions = KeyboardActions.Default,
 ){
     Column (
-        modifier = modifier.fillMaxWidth()
+        modifier = Modifier.fillMaxWidth()
     ){
         Text(
             text = text,
@@ -37,10 +41,13 @@ fun LetsLabeledTextField(
         Spacer(modifier = Modifier.height(4.dp))
 
         LetsTextField(
+            modifier = modifier,
             placeholder = placeholder,
             value = value,
             onValueChange = onValueChange,
             isPassword = isPassword,
+            keyboardOptions = keyboardOptions,
+            keyboardActions = keyboardActions,
         )
     }
 }

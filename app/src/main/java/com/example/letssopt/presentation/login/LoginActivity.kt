@@ -23,11 +23,16 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
@@ -36,16 +41,19 @@ import androidx.compose.ui.unit.dp
 import com.example.letssopt.core.designsystem.component.button.LetsButton
 import com.example.letssopt.core.designsystem.component.textfield.LetsLabeledTextField
 import com.example.letssopt.core.designsystem.theme.LetsTheme
+import com.example.letssopt.presentation.MainActivity
 import com.example.letssopt.presentation.signup.SignupActivity
 
 class LoginActivity : ComponentActivity() {
-    // 📌 역할 1: 결과 받을 준비
+    private var savedId: String? = null
+    private var savedPw: String? = null
+
     private val signUpLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
         if (result.resultCode == RESULT_OK) {
-            val id = result.data?.getStringExtra("userId")
-            val pw = result.data?.getStringExtra("userPw")
+            savedId = result.data?.getStringExtra("userId")
+            savedPw = result.data?.getStringExtra("userPw")
         }
     }
 
@@ -61,6 +69,22 @@ class LoginActivity : ComponentActivity() {
                             val intent = Intent(this, SignupActivity::class.java)
                             signUpLauncher.launch(intent)
                         },
+                        onLoginClick = {inputId, inputPw ->
+                            when {
+                                savedId == null || savedPw == null -> {
+                                    Toast.makeText(this, "회원가입을 먼저 해주세요", Toast.LENGTH_SHORT).show()
+                                }
+                                inputId == savedId && inputPw == savedPw -> {
+                                    val intent = Intent(this, MainActivity::class.java)
+                                    Toast.makeText(this, "로그인에 성공했습니다", Toast.LENGTH_SHORT).show()
+                                    startActivity((intent))
+                                    finish()
+                                }
+                                else -> {
+                                    Toast.makeText(this, "아이디 또는 비밀번호가 일치하지 않습니다", Toast.LENGTH_SHORT).show()
+                                }
+                            }
+                        }
                     )
                 }
             }
@@ -71,12 +95,13 @@ class LoginActivity : ComponentActivity() {
 @Composable
 fun LoginScreen(
     modifier: Modifier = Modifier,
-    onSignUpClick: () -> Unit
+    onSignUpClick: () -> Unit,
+    onLoginClick: (String, String) -> Unit,
 ){
     var emailText by remember { mutableStateOf("") }
     var passwordText by remember { mutableStateOf("") }
 
-    val context = LocalContext.current
+    val passwordFocusRequester = remember { FocusRequester() }
     val scrollState = rememberScrollState()
 
     Column (
@@ -91,7 +116,7 @@ fun LoginScreen(
             text = "watcha",
             modifier = Modifier.fillMaxWidth(),
             color = LetsTheme.colors.primaryRed,
-            style = LetsTheme.typography.title.bold_24,
+            style = LetsTheme.typography.title.logo_36,
             textAlign = TextAlign.Center
         )
 
@@ -111,16 +136,25 @@ fun LoginScreen(
             placeholder = "이메일 주소를 입력하세요",
             value = emailText,
             onValueChange = { emailText = it },
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+            keyboardActions = KeyboardActions(
+                onNext = { passwordFocusRequester.requestFocus() }
+            ),
         )
 
         Spacer(modifier = Modifier.height(18.dp))
 
         LetsLabeledTextField(
+            modifier = Modifier.focusRequester(passwordFocusRequester),
             text = "비밀번호",
             placeholder = "비밀번호를 입력하세요",
             value = passwordText,
             onValueChange = { passwordText = it },
             isPassword = true,
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+            keyboardActions = KeyboardActions(
+                onDone = { onLoginClick(emailText, passwordText) }
+            ),
         )
 
         Spacer(modifier = Modifier.height(334.dp))
@@ -133,7 +167,9 @@ fun LoginScreen(
 
         LetsButton(
             text = "로그인",
-            onClick = {},
+            onClick = {
+                onLoginClick(emailText, passwordText)
+            },
             modifier = Modifier.fillMaxWidth(),
             enabled = true,
         )
@@ -174,7 +210,8 @@ private fun LoginToSignup(
 private fun LoginPreview(){
     LetsTheme {
         LoginScreen(
-            onSignUpClick = {}
+            onSignUpClick = {},
+            onLoginClick = {_, _ ->}
         )
     }
 }
