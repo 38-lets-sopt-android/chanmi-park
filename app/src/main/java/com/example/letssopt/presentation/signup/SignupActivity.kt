@@ -97,7 +97,7 @@ fun SignupScreen(
         Spacer(modifier = Modifier.height(36.dp))
 
         LetsLabeledTextField(
-            text = "이메일",
+            label = "이메일",
             placeholder = "이메일 주소를 입력하세요",
             value = emailText,
             onValueChange = { emailText = it },
@@ -106,7 +106,7 @@ fun SignupScreen(
         Spacer(modifier = Modifier.height(18.dp))
 
         LetsLabeledTextField(
-            text = "비밀번호",
+            label = "비밀번호",
             placeholder = "비밀번호를 입력하세요",
             value = passwordText,
             onValueChange = { passwordText = it },
@@ -116,7 +116,7 @@ fun SignupScreen(
         Spacer(modifier = Modifier.height(18.dp))
 
         LetsLabeledTextField(
-            text = "비밀번호 확인",
+            label = "비밀번호 확인",
             placeholder = "비밀번호를 다시 입력하세요",
             value = rePasswordText,
             onValueChange = { rePasswordText = it },

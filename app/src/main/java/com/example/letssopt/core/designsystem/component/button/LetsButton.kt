@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.letssopt.core.designsystem.theme.LetsTheme
@@ -24,21 +25,17 @@ fun LetsButton(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
 ){
-    Column (
+    Text(
+        text = text,
         modifier = modifier
             .clip(shape = RoundedCornerShape(8.dp))
-            .background(color = if(enabled) LetsTheme.colors.primaryRed else LetsTheme.colors.surface)
+            .background(color = if (enabled) LetsTheme.colors.primaryRed else LetsTheme.colors.surface)
             .noRippleClickable(enabled = enabled, onClick = onClick)
             .padding(vertical = 16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
-    ){
-        Text(
-            text = text,
-            color = if(enabled) LetsTheme.colors.textPrimary else LetsTheme.colors.placeholder,
-            style = LetsTheme.typography.subtitle.body_16
-        )
-    }
+        color = if (enabled) LetsTheme.colors.textPrimary else LetsTheme.colors.placeholder,
+        textAlign = TextAlign.Center,
+        style = LetsTheme.typography.subtitle.body_16,
+    )
 }
 
 @Preview

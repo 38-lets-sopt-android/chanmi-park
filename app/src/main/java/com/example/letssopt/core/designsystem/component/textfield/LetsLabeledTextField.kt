@@ -20,7 +20,7 @@ import com.example.letssopt.core.designsystem.theme.LetsTheme
 
 @Composable
 fun LetsLabeledTextField(
-    text: String,
+    label: String,
     placeholder: String,
     value: String,
     onValueChange: (String) -> Unit,
@@ -30,10 +30,10 @@ fun LetsLabeledTextField(
     keyboardActions: KeyboardActions = KeyboardActions.Default,
 ){
     Column (
-        modifier = Modifier.fillMaxWidth()
+        modifier = modifier.fillMaxWidth()
     ){
         Text(
-            text = text,
+            text = label,
             style = LetsTheme.typography.subtitle.caption_13,
             color = LetsTheme.colors.textSecondary,
         )
@@ -41,7 +41,7 @@ fun LetsLabeledTextField(
         Spacer(modifier = Modifier.height(4.dp))
 
         LetsTextField(
-            modifier = modifier,
+            modifier = Modifier,
             placeholder = placeholder,
             value = value,
             onValueChange = onValueChange,
@@ -59,7 +59,7 @@ private fun LetsTextFieldPreview(){
         var text by remember { mutableStateOf("") }
 
         LetsLabeledTextField(
-            text = "로그인",
+            label = "로그인",
             placeholder = "이메일 주소를 입력하세요",
             value = text,
             onValueChange = { text = it },

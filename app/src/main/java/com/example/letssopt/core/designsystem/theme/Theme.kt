@@ -23,7 +23,7 @@ object LetsTheme {
 }
 
 @Composable
-fun ProvideCertiColorsAndTypography(
+private fun ProvideLetsColorsAndTypography(
     colors: LetsColors,
     typography: LetsTypography,
     content: @Composable () -> Unit
@@ -39,7 +39,7 @@ fun ProvideCertiColorsAndTypography(
 fun LetsTheme(
     content: @Composable () -> Unit
 ) {
-    ProvideCertiColorsAndTypography(
+    ProvideLetsColorsAndTypography(
         colors = defaultLetsColors,
         typography = defaultLestsTypography
     ) {

@@ -4,12 +4,12 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 
-val PrimaryRed = Color(0xFFE8003C)
-val Background = Color(0xFF141414)
-val Surface = Color(0xFF2A2A2A)
-val TextPrimary = Color(0xFFFFFFFF)
-val TextSecondary = Color(0xFF999999)
-val Placeholder = Color(0xFF666666)
+private val PrimaryRed = Color(0xFFE8003C)
+private val Background = Color(0xFF141414)
+private val Surface = Color(0xFF2A2A2A)
+private val TextPrimary = Color(0xFFFFFFFF)
+private val TextSecondary = Color(0xFF999999)
+private val Placeholder = Color(0xFF666666)
 
 @Immutable
 data class LetsColors(

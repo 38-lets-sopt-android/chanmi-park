@@ -35,42 +35,38 @@ fun LetsTextField(
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
 ){
-    val visualTransformation =
+    val visualTransformation = remember (isPassword) {
         if (isPassword) {
             PasswordVisualTransformation()
         } else {
             VisualTransformation.None
         }
-    Column (
-        modifier = modifier
-            .clip(shape = RoundedCornerShape(8.dp))
-            .background(color = LetsTheme.colors.surface),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
-    ){
-        BasicTextField(
-            modifier = modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 18.dp),
-            value = value,
-            onValueChange = onValueChange,
-            textStyle = TextStyle(color = LetsTheme.colors.textPrimary),
-            singleLine = true,
-            visualTransformation = visualTransformation,
-            keyboardOptions = keyboardOptions,
-            keyboardActions = keyboardActions,
-            decorationBox ={ innerTextField ->
-                if (value.isEmpty()) {
-                    Text(
-                        text = placeholder,
-                        style = LetsTheme.typography.subtitle.caption_13,
-                        color = LetsTheme.colors.placeholder,
-                    )
-                }
-                innerTextField()
-            }
-        )
     }
+
+    BasicTextField(
+        modifier = modifier
+            .fillMaxWidth()
+            .clip(shape = RoundedCornerShape(8.dp))
+            .background(color = LetsTheme.colors.surface)
+            .padding(horizontal = 16.dp, vertical = 18.dp),
+        value = value,
+        onValueChange = onValueChange,
+        textStyle = TextStyle(color = LetsTheme.colors.textPrimary),
+        singleLine = true,
+        visualTransformation = visualTransformation,
+        keyboardOptions = keyboardOptions,
+        keyboardActions = keyboardActions,
+        decorationBox ={ innerTextField ->
+            if (value.isEmpty()) {
+                Text(
+                    text = placeholder,
+                    style = LetsTheme.typography.subtitle.caption_13,
+                    color = LetsTheme.colors.placeholder,
+                )
+            }
+            innerTextField()
+        }
+    )
 }
 
 @Preview

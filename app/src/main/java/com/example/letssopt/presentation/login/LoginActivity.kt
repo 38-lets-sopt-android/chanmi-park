@@ -29,6 +29,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
@@ -106,7 +107,7 @@ fun LoginScreen(
 
     Column (
         modifier = modifier
-            .fillMaxWidth()
+            .fillMaxSize()
             .verticalScroll(scrollState)
             .background(color = LetsTheme.colors.background)
             .padding(horizontal = 20.dp)
@@ -114,17 +115,15 @@ fun LoginScreen(
     ){
         Text(
             text = "watcha",
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.align(Alignment.CenterHorizontally),
             color = LetsTheme.colors.primaryRed,
-            style = LetsTheme.typography.title.logo_36,
-            textAlign = TextAlign.Center
+            style = LetsTheme.typography.title.logo_36
         )
 
         Spacer(modifier = Modifier.height(26.dp))
 
         Text(
             text = "이메일로 로그인",
-            modifier = Modifier.fillMaxWidth(),
             color = LetsTheme.colors.textPrimary,
             style = LetsTheme.typography.title.bold_20,
         )
@@ -132,7 +131,7 @@ fun LoginScreen(
         Spacer(modifier = Modifier.height(36.dp))
 
         LetsLabeledTextField(
-            text = "이메일",
+            label = "이메일",
             placeholder = "이메일 주소를 입력하세요",
             value = emailText,
             onValueChange = { emailText = it },
@@ -146,7 +145,7 @@ fun LoginScreen(
 
         LetsLabeledTextField(
             modifier = Modifier.focusRequester(passwordFocusRequester),
-            text = "비밀번호",
+            label = "비밀번호",
             placeholder = "비밀번호를 입력하세요",
             value = passwordText,
             onValueChange = { passwordText = it },
@@ -157,7 +156,7 @@ fun LoginScreen(
             ),
         )
 
-        Spacer(modifier = Modifier.height(334.dp))
+        Spacer(modifier = Modifier.weight(1f))
 
         LoginToSignup(
             onClick = {onSignUpClick()}
