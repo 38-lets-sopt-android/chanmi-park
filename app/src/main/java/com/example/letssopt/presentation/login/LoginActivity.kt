@@ -40,7 +40,7 @@ import androidx.compose.ui.unit.dp
 import com.example.letssopt.core.designsystem.component.button.LetsButton
 import com.example.letssopt.core.designsystem.component.textfield.LetsLabeledTextField
 import com.example.letssopt.core.designsystem.theme.LetsTheme
-import com.example.letssopt.presentation.MainActivity
+import com.example.letssopt.presentation.main.MainActivity
 import com.example.letssopt.presentation.signup.SignupActivity
 
 class LoginActivity : ComponentActivity() {

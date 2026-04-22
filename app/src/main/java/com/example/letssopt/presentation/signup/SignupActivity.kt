@@ -59,7 +59,7 @@ class SignupActivity : ComponentActivity() {
 @Composable
 fun SignupScreen(
     modifier: Modifier = Modifier,
-    onSignupComplete: (String, String) -> Unit
+    onSignupComplete: (String, String) -> Unit,
 ){
     var emailText by remember { mutableStateOf("") }
     var passwordText by remember { mutableStateOf("") }
@@ -71,7 +71,7 @@ fun SignupScreen(
 
     Column (
         modifier = modifier
-            .fillMaxWidth()
+            .fillMaxSize()
             .verticalScroll(scrollState)
             .background(color = LetsTheme.colors.background)
             .padding(horizontal = 20.dp)
@@ -123,7 +123,7 @@ fun SignupScreen(
             isPassword = true,
         )
 
-        Spacer(modifier = Modifier.height(280.dp))
+        Spacer(modifier = Modifier.weight(1f))
 
         LetsButton(
             text = "회원가입",

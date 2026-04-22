@@ -3,4 +3,10 @@
     <string name="title_activity_login">LoginActivity</string>
     <string name="title_activity_signup">SignupActivity</string>
     <string name="title_activity_home">HomeActivity</string>
+
+    <string name="bottom_main">메인</string>
+    <string name="bottom_puchase">개별 구매</string>
+    <string name="bottom_webtoon">웹툰</string>
+    <string name="bottom_search">찾기</string>
+    <string name="bottom_collection">보관함</string>
 </resources>
