@@ -22,7 +22,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.letssopt.core.designsystem.theme.LetsTheme
 import com.example.letssopt.core.util.noRippleClickable
-import com.example.letssopt.presentation.main.component.MainTab
 
 @Composable
 fun MainBottomBar(
@@ -60,6 +59,8 @@ private fun RowScope.MainBottomBarItem(
     onClick: () -> Unit = {},
 ){
     val label = stringResource(tab.labelRes)
+    val color = if (selected) LetsTheme.colors.textPrimary else LetsTheme.colors.disabled
+
     Column (
         modifier = Modifier
             .noRippleClickable(onClick = onClick)
@@ -71,14 +72,14 @@ private fun RowScope.MainBottomBarItem(
             imageVector = ImageVector.vectorResource(tab.iconRes),
             modifier = Modifier.size(24.dp),
             contentDescription = label,
-            tint = if (selected) LetsTheme.colors.textPrimary else LetsTheme.colors.disabled,
+            tint = color,
         )
 
         Spacer(modifier = Modifier.height(7.dp))
 
         Text(
             text = label,
-            color = if(selected) LetsTheme.colors.textPrimary else LetsTheme.colors.disabled,
+            color = color,
             style = LetsTheme.typography.subtitle.body_12
         )
     }

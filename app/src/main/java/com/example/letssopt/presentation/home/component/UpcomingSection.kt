@@ -30,11 +30,11 @@ fun UpcomingSection(
             titleColor = LetsTheme.colors.textPrimary,
         )
 
-        Spacer(modifier = Modifier.height(6.dp))
+        Spacer(modifier = Modifier.height(8.dp))
 
         LazyRow(
             modifier = Modifier.fillMaxWidth(),
-            contentPadding = PaddingValues(8.dp),
+            contentPadding = PaddingValues(horizontal = 8.dp),
             horizontalArrangement = Arrangement.spacedBy(13.dp),
         ){
             items(contents) { content ->

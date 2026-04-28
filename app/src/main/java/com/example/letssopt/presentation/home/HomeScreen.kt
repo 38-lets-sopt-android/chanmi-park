@@ -3,7 +3,6 @@ package com.example.letssopt.presentation.home
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -30,7 +29,6 @@ fun HomeRoute(
     Scaffold(
         modifier = modifier,
         containerColor = LetsTheme.colors.background,
-        contentWindowInsets = WindowInsets(0),
         topBar = {HomeTopAppBar()}
     ) { innerPadding ->
         HomeScreen(
@@ -69,3 +67,4 @@ private fun HomeScreen(
         PartySection(contents = partyContents)
     }
 }
+

@@ -1,6 +1,5 @@
 package com.example.letssopt.presentation.main
 
-import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -9,13 +8,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import com.example.letssopt.core.designsystem.theme.LetsTheme
 import com.example.letssopt.presentation.collection.CollectionRoute
 import com.example.letssopt.presentation.home.HomeRoute
@@ -54,18 +51,5 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun GreetingPreview() {
-    LetsTheme {
-        Greeting("Android")
     }
 }

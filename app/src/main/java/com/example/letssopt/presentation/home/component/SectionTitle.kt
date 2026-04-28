@@ -37,6 +37,7 @@ fun SectionTitle(
 
             if (subtitle != null){
                 Spacer(modifier = Modifier.height(4.dp))
+
                 Text(
                     text = subtitle,
                     color = LetsTheme.colors.textSecondary,
