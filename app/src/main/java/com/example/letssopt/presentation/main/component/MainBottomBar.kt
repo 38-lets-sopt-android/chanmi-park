@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.key
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -40,13 +39,11 @@ fun MainBottomBar(
                 .padding(horizontal = 18.dp, vertical = 11.dp),
     ) {
         tabs.forEach { tab ->
-            key(tab) {
-                MainBottomBarItem(
-                    tab = tab,
-                    selected = (tab == currentTab),
-                    onClick = { onTabSelected(tab) },
-                )
-            }
+            MainBottomBarItem(
+                tab = tab,
+                selected = (tab == currentTab),
+                onClick = { onTabSelected(tab) },
+            )
         }
     }
 
