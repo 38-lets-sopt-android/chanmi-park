@@ -9,8 +9,11 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.letssopt.core.designsystem.theme.LetsTheme
 import com.example.letssopt.presentation.home.component.HomeTopAppBar
@@ -18,13 +21,18 @@ import com.example.letssopt.presentation.home.component.NewContentSection
 import com.example.letssopt.presentation.home.component.PartySection
 import com.example.letssopt.presentation.home.component.UpcomingSection
 import com.example.letssopt.presentation.home.component.WhatgorismSection
+import com.example.letssopt.presentation.home.fake.FakeHomeRepository.newContents
+import com.example.letssopt.presentation.home.fake.FakeHomeRepository.partyContents
+import com.example.letssopt.presentation.home.fake.FakeHomeRepository.upcomingContents
+import com.example.letssopt.presentation.home.fake.FakeHomeRepository.whatgorismContents
+import com.example.letssopt.presentation.home.uistate.HomeUiState
 
 @Composable
 fun HomeRoute(
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = viewModel(),
 ){
-    val sections = viewModel.getSections()
+    val uiState by viewModel.uiState.collectAsState()
 
     Scaffold(
         modifier = modifier,
@@ -32,10 +40,7 @@ fun HomeRoute(
         topBar = {HomeTopAppBar()}
     ) { innerPadding ->
         HomeScreen(
-            newContents = sections.find { it.sectionTitle == "배너" }?.contents ?: emptyList(),
-            whatgorismContents = sections.find { it.sectionTitle == "왓고리즘" }?.contents ?: emptyList(),
-            upcomingContents = sections.find { it.sectionTitle == "공개 예정 콘텐츠" }?.contents ?: emptyList(),
-            partyContents = sections.find { it.sectionTitle == "왓챠 파티" }?.contents ?: emptyList(),
+            uiState = uiState,
             modifier = Modifier.padding(innerPadding),
         )
     }
@@ -43,10 +48,7 @@ fun HomeRoute(
 
 @Composable
 private fun HomeScreen(
-    newContents: List<ContentItem>,
-    whatgorismContents: List<ContentItem>,
-    upcomingContents: List<ContentItem>,
-    partyContents: List<ContentItem>,
+    uiState: HomeUiState,
     modifier: Modifier = Modifier,
 ){
     val scrollState = rememberScrollState()
@@ -58,13 +60,13 @@ private fun HomeScreen(
             .verticalScroll(scrollState),
         verticalArrangement = Arrangement.spacedBy(26.dp),
         ) {
-        NewContentSection(contents = newContents)
+        NewContentSection(contents = uiState.newContents)
 
-        WhatgorismSection(contents = whatgorismContents)
+        WhatgorismSection(contents = uiState.whatgorismContents)
 
-        UpcomingSection(contents = upcomingContents)
+        UpcomingSection(contents = uiState.upcomingContents)
 
-        PartySection(contents = partyContents)
+        PartySection(contents = uiState.partyContents)
     }
 }
 
