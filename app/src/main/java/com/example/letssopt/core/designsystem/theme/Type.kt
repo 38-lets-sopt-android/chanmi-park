@@ -24,6 +24,7 @@ sealed interface TypographyTokens {
     @Immutable
     data class Subtitle(
         val body_16: TextStyle,
+        val body_12: TextStyle,
         val caption_13: TextStyle
     )
 }
@@ -56,6 +57,11 @@ val defaultLestsTypography = LetsTypography(
         body_16 = TextStyle(
             fontFamily = PretendardFont.Regular,
             fontSize = 16.sp,
+            lineHeight = 28.8.sp, // 120%
+        ),
+        body_12 = TextStyle(
+            fontFamily = PretendardFont.Regular,
+            fontSize = 12.sp,
             lineHeight = 28.8.sp, // 120%
         ),
         caption_13 = TextStyle(

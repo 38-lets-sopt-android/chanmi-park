@@ -34,32 +34,39 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.letssopt.core.designsystem.component.button.LetsButton
 import com.example.letssopt.core.designsystem.component.textfield.LetsLabeledTextField
 import com.example.letssopt.core.designsystem.theme.LetsTheme
-import com.example.letssopt.presentation.MainActivity
+import com.example.letssopt.data.local.UserPreferences
+import com.example.letssopt.presentation.main.MainActivity
 import com.example.letssopt.presentation.signup.SignupActivity
 
 class LoginActivity : ComponentActivity() {
-    private var savedId: String? = null
-    private var savedPw: String? = null
+    private lateinit var userPreferences: UserPreferences
 
     private val signUpLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
         if (result.resultCode == RESULT_OK) {
-            savedId = result.data?.getStringExtra("userId")
-            savedPw = result.data?.getStringExtra("userPw")
+            val userId = result.data?.getStringExtra("userId") ?: return@registerForActivityResult
+            val userPw = result.data?.getStringExtra("userPw") ?: return@registerForActivityResult
+            userPreferences.saveSignUpInfo(userId, userPw)
         }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        userPreferences = UserPreferences(this)
+
+        if (userPreferences.isLoggedIn()) {
+            startActivity(Intent(this, MainActivity::class.java))
+            finish()
+            return
+        }
+
         enableEdgeToEdge()
         setContent {
             LetsTheme {
@@ -70,15 +77,17 @@ class LoginActivity : ComponentActivity() {
                             val intent = Intent(this, SignupActivity::class.java)
                             signUpLauncher.launch(intent)
                         },
-                        onLoginClick = {inputId, inputPw ->
+                        onLoginClick = { inputId, inputPw ->
+                            val savedId = userPreferences.getUserId()
+                            val savedPw = userPreferences.getUserPw()
                             when {
                                 savedId == null || savedPw == null -> {
                                     Toast.makeText(this, "회원가입을 먼저 해주세요", Toast.LENGTH_SHORT).show()
                                 }
                                 inputId == savedId && inputPw == savedPw -> {
-                                    val intent = Intent(this, MainActivity::class.java)
+                                    userPreferences.saveLoginState(true)
                                     Toast.makeText(this, "로그인에 성공했습니다", Toast.LENGTH_SHORT).show()
-                                    startActivity((intent))
+                                    startActivity(Intent(this, MainActivity::class.java))
                                     finish()
                                 }
                                 else -> {

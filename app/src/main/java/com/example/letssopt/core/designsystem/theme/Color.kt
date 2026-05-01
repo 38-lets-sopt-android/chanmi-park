@@ -10,6 +10,8 @@ private val Surface = Color(0xFF2A2A2A)
 private val TextPrimary = Color(0xFFFFFFFF)
 private val TextSecondary = Color(0xFF999999)
 private val Placeholder = Color(0xFF666666)
+private val Disabled = Color(0xFF333333)
+private val Black = Color(0xFF000000)
 
 @Immutable
 data class LetsColors(
@@ -18,7 +20,9 @@ data class LetsColors(
     val surface: Color = Surface,
     val textPrimary: Color = TextPrimary,
     val textSecondary: Color = TextSecondary,
-    val placeholder: Color = Placeholder
+    val placeholder: Color = Placeholder,
+    val disabled: Color = Disabled,
+    val black: Color = Black,
 )
 
 val defaultLetsColors = LetsColors(
@@ -27,7 +31,9 @@ val defaultLetsColors = LetsColors(
     surface = Surface,
     textPrimary = TextPrimary,
     textSecondary = TextSecondary,
-    placeholder = Placeholder
+    placeholder = Placeholder,
+    disabled = Disabled,
+    black = Black,
 )
 
 val LocalLetsColorsProvider = staticCompositionLocalOf { defaultLetsColors }
