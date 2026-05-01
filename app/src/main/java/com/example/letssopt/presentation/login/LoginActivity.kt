@@ -7,6 +7,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -25,10 +26,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -37,15 +37,19 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import androidx.lifecycle.Lifecycle
 import com.example.letssopt.core.designsystem.component.button.LetsButton
+import com.example.letssopt.presentation.login.uistate.LoginUiState
 import com.example.letssopt.core.designsystem.component.textfield.LetsLabeledTextField
 import com.example.letssopt.core.designsystem.theme.LetsTheme
-import com.example.letssopt.data.local.UserPreferences
 import com.example.letssopt.presentation.main.MainActivity
 import com.example.letssopt.presentation.signup.SignupActivity
+import kotlinx.coroutines.launch
 
 class LoginActivity : ComponentActivity() {
-    private lateinit var userPreferences: UserPreferences
+    private val viewModel: LoginViewModel by viewModels()
 
     private val signUpLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
@@ -53,48 +57,44 @@ class LoginActivity : ComponentActivity() {
         if (result.resultCode == RESULT_OK) {
             val userId = result.data?.getStringExtra("userId") ?: return@registerForActivityResult
             val userPw = result.data?.getStringExtra("userPw") ?: return@registerForActivityResult
-            userPreferences.saveSignUpInfo(userId, userPw)
+            viewModel.saveSignUpInfo(userId, userPw)
         }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        userPreferences = UserPreferences(this)
+        enableEdgeToEdge()
 
-        if (userPreferences.isLoggedIn()) {
-            startActivity(Intent(this, MainActivity::class.java))
-            finish()
-            return
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.event.collect { event ->
+                    when (event) {
+                        is LoginEvent.NavigateToMain -> {
+                            startActivity(Intent(this@LoginActivity, MainActivity::class.java))
+                            finish()
+                        }
+                        is LoginEvent.ShowToast -> {
+                            Toast.makeText(this@LoginActivity, event.message, Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
+            }
         }
 
-        enableEdgeToEdge()
         setContent {
             LetsTheme {
+                val uiState by viewModel.uiState.collectAsState()
+
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     LoginScreen(
-                        modifier = Modifier.padding(innerPadding),
+                        uiState = uiState,
+                        onEmailChange = viewModel::onEmailChange,
+                        onPasswordChange = viewModel::onPasswordChange,
                         onSignUpClick = {
-                            val intent = Intent(this, SignupActivity::class.java)
-                            signUpLauncher.launch(intent)
+                            signUpLauncher.launch(Intent(this, SignupActivity::class.java))
                         },
-                        onLoginClick = { inputId, inputPw ->
-                            val savedId = userPreferences.getUserId()
-                            val savedPw = userPreferences.getUserPw()
-                            when {
-                                savedId == null || savedPw == null -> {
-                                    Toast.makeText(this, "회원가입을 먼저 해주세요", Toast.LENGTH_SHORT).show()
-                                }
-                                inputId == savedId && inputPw == savedPw -> {
-                                    userPreferences.saveLoginState(true)
-                                    Toast.makeText(this, "로그인에 성공했습니다", Toast.LENGTH_SHORT).show()
-                                    startActivity(Intent(this, MainActivity::class.java))
-                                    finish()
-                                }
-                                else -> {
-                                    Toast.makeText(this, "아이디 또는 비밀번호가 일치하지 않습니다", Toast.LENGTH_SHORT).show()
-                                }
-                            }
-                        }
+                        onLoginClick = viewModel::login,
+                        modifier = Modifier.padding(innerPadding),
                     )
                 }
             }
@@ -104,24 +104,24 @@ class LoginActivity : ComponentActivity() {
 
 @Composable
 fun LoginScreen(
-    modifier: Modifier = Modifier,
+    uiState: LoginUiState,
+    onEmailChange: (String) -> Unit,
+    onPasswordChange: (String) -> Unit,
     onSignUpClick: () -> Unit,
-    onLoginClick: (String, String) -> Unit,
-){
-    var emailText by remember { mutableStateOf("") }
-    var passwordText by remember { mutableStateOf("") }
-
+    onLoginClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
     val passwordFocusRequester = remember { FocusRequester() }
     val scrollState = rememberScrollState()
 
-    Column (
+    Column(
         modifier = modifier
             .fillMaxSize()
             .verticalScroll(scrollState)
             .background(color = LetsTheme.colors.background)
             .padding(horizontal = 20.dp)
             .padding(top = 60.dp, bottom = 26.dp),
-    ){
+    ) {
         Text(
             text = "watcha",
             modifier = Modifier.align(Alignment.CenterHorizontally),
@@ -142,8 +142,8 @@ fun LoginScreen(
         LetsLabeledTextField(
             label = "이메일",
             placeholder = "이메일 주소를 입력하세요",
-            value = emailText,
-            onValueChange = { emailText = it },
+            value = uiState.email,
+            onValueChange = onEmailChange,
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
             keyboardActions = KeyboardActions(
                 onNext = { passwordFocusRequester.requestFocus() }
@@ -156,30 +156,26 @@ fun LoginScreen(
             modifier = Modifier.focusRequester(passwordFocusRequester),
             label = "비밀번호",
             placeholder = "비밀번호를 입력하세요",
-            value = passwordText,
-            onValueChange = { passwordText = it },
+            value = uiState.password,
+            onValueChange = onPasswordChange,
             isPassword = true,
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
             keyboardActions = KeyboardActions(
-                onDone = { onLoginClick(emailText, passwordText) }
+                onDone = { onLoginClick() }
             ),
         )
 
         Spacer(modifier = Modifier.weight(1f))
 
-        LoginToSignup(
-            onClick = {onSignUpClick()}
-        )
+        LoginToSignup(onClick = onSignUpClick)
 
         Spacer(modifier = Modifier.height(20.dp))
 
         LetsButton(
             text = "로그인",
-            onClick = {
-                onLoginClick(emailText, passwordText)
-            },
+            onClick = onLoginClick,
             modifier = Modifier.fillMaxWidth(),
-            enabled = true,
+            enabled = uiState.isLoginEnabled && !uiState.isLoading,
         )
     }
 }
@@ -187,12 +183,12 @@ fun LoginScreen(
 @Composable
 private fun LoginToSignup(
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
-){
-    Row (
+    modifier: Modifier = Modifier,
+) {
+    Row(
         modifier = modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.Center
-    ){
+    ) {
         Text(
             text = "아직 계정이 없으신가요?",
             color = LetsTheme.colors.textSecondary,
@@ -203,9 +199,7 @@ private fun LoginToSignup(
 
         Text(
             text = "회원가입",
-            modifier = Modifier.clickable{
-                onClick()
-            },
+            modifier = Modifier.clickable { onClick() },
             color = LetsTheme.colors.textSecondary,
             style = LetsTheme.typography.subtitle.caption_13,
             textDecoration = TextDecoration.Underline,
@@ -215,11 +209,14 @@ private fun LoginToSignup(
 
 @Preview
 @Composable
-private fun LoginPreview(){
+private fun LoginPreview() {
     LetsTheme {
         LoginScreen(
+            uiState = LoginUiState(),
+            onEmailChange = {},
+            onPasswordChange = {},
             onSignUpClick = {},
-            onLoginClick = {_, _ ->}
+            onLoginClick = {},
         )
     }
 }
