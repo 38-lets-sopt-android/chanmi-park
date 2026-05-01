@@ -31,11 +31,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.letssopt.R
 import com.example.letssopt.core.designsystem.theme.LetsTheme
-import com.example.letssopt.presentation.home.ContentItem
+import com.example.letssopt.domain.model.PartyModel
 
 @Composable
 fun PartySection(
-    contents: List<ContentItem>,
+    contents: List<PartyModel>,
     modifier: Modifier = Modifier
 ){
     Column(modifier = modifier) {
@@ -74,6 +74,7 @@ private fun PartyItem(
         modifier = Modifier
             .width(200.dp)
             .background(color = LetsTheme.colors.surface)
+            .padding(bottom = 7.dp)
     ) {
         PartyImageItem(contentImg = contentImg)
 
@@ -146,10 +147,8 @@ private fun PreviewNewContent(){
     LetsTheme {
         PartySection(
             contents = listOf(
-                ContentItem(id = 1, title = "테스트1", image = R.drawable.img_content_7),
-                ContentItem(id = 2, title = "테스트2", image = R.drawable.img_content_8),
-                ContentItem(id = 3, title = "테스트3", image = R.drawable.img_content_9),
-                ContentItem(id = 3, title = "테스트3", image = R.drawable.img_content_9),
+                PartyModel(id = 5, title = "왕과 사는 남자", image = R.drawable.img_content_5, startTime = "오늘 21:13에 시작", tag = "#왕과사는 남자"),
+                PartyModel(id = 6, title = "파묘", image = R.drawable.img_content_6, startTime = "오늘 22:22에 시작", tag = "#파묘"),
             )
         )
 //        PartyItem(
