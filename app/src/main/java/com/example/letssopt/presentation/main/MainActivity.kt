@@ -36,7 +36,7 @@ class MainActivity : ComponentActivity() {
                 ) { innerPadding ->
                     MainNavHost(
                         appState = appState,
-                        paddingValues = innerPadding
+                        paddingValues = innerPadding,
                     )
                 }
             }
