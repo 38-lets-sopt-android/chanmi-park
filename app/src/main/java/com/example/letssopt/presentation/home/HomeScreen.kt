@@ -23,6 +23,10 @@ import com.example.letssopt.presentation.home.component.PartySection
 import com.example.letssopt.presentation.home.component.UpcomingSection
 import com.example.letssopt.presentation.home.component.WhatgorismSection
 import com.example.letssopt.presentation.home.uistate.HomeUiState
+import kotlinx.serialization.Serializable
+
+@Serializable
+data object Home {}
 
 @Composable
 fun HomeRoute(
