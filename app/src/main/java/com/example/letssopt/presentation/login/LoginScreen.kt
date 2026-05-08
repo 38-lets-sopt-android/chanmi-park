@@ -1,17 +1,11 @@
 package com.example.letssopt.presentation.login
 
-import android.content.Intent
-import android.os.Bundle
 import android.widget.Toast
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.activity.viewModels
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -20,12 +14,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -33,81 +27,56 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
-import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.letssopt.core.designsystem.component.button.LetsButton
-import com.example.letssopt.presentation.login.uistate.LoginUiState
 import com.example.letssopt.core.designsystem.component.textfield.LetsLabeledTextField
 import com.example.letssopt.core.designsystem.theme.LetsTheme
-import com.example.letssopt.presentation.main.MainActivity
-import com.example.letssopt.presentation.signup.SignupActivity
-import kotlinx.coroutines.launch
+import com.example.letssopt.presentation.login.uistate.LoginUiState
+import kotlinx.serialization.Serializable
 
-class LoginActivity : ComponentActivity() {
-    private val viewModel: LoginViewModel by viewModels()
+@Serializable
+data object Login {}
 
-    private val signUpLauncher = registerForActivityResult(
-        ActivityResultContracts.StartActivityForResult()
-    ) { result ->
-        if (result.resultCode == RESULT_OK) {
-            val userId = result.data?.getStringExtra("userId") ?: return@registerForActivityResult
-            val userPw = result.data?.getStringExtra("userPw") ?: return@registerForActivityResult
-            viewModel.saveSignUpInfo(userId, userPw)
-        }
-    }
+@Composable
+fun LoginRoute(
+    paddingValues: PaddingValues,
+    navigateToHome: () -> Unit,
+    navigateToSignup: () -> Unit,
+    viewModel: LoginViewModel = viewModel(),
+){
+    val uiState by viewModel.uiState.collectAsState()
+    val context = LocalContext.current
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.event.collect { event ->
-                    when (event) {
-                        is LoginEvent.NavigateToMain -> {
-                            startActivity(Intent(this@LoginActivity, MainActivity::class.java))
-                            finish()
-                        }
-                        is LoginEvent.ShowToast -> {
-                            Toast.makeText(this@LoginActivity, event.message, Toast.LENGTH_SHORT).show()
-                        }
-                    }
-                }
-            }
-        }
-
-        setContent {
-            LetsTheme {
-                val uiState by viewModel.uiState.collectAsState()
-
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    LoginScreen(
-                        uiState = uiState,
-                        onEmailChange = viewModel::onEmailChange,
-                        onPasswordChange = viewModel::onPasswordChange,
-                        onSignUpClick = {
-                            signUpLauncher.launch(Intent(this, SignupActivity::class.java))
-                        },
-                        onLoginClick = viewModel::login,
-                        modifier = Modifier.padding(innerPadding),
-                    )
-                }
+    LaunchedEffect(Unit) {
+        viewModel.event.collect { event ->
+            when (event) {
+                is LoginEvent.NavigateToHome -> navigateToHome()
+                is LoginEvent.ShowToast -> Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
             }
         }
     }
+
+    LoginScreen(
+        uiState = uiState,
+        onEmailChange = viewModel::onEmailChange,
+        onPasswordChange = viewModel::onPasswordChange,
+        navigateToSignup = navigateToSignup,
+        onLoginClick = viewModel::login,
+        modifier = Modifier.padding(paddingValues),
+    )
 }
 
 @Composable
-fun LoginScreen(
+private fun LoginScreen(
     uiState: LoginUiState,
     onEmailChange: (String) -> Unit,
     onPasswordChange: (String) -> Unit,
-    onSignUpClick: () -> Unit,
+    navigateToSignup: () -> Unit,
     onLoginClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -167,7 +136,7 @@ fun LoginScreen(
 
         Spacer(modifier = Modifier.weight(1f))
 
-        LoginToSignup(onClick = onSignUpClick)
+        LoginToSignup(onClick = navigateToSignup)
 
         Spacer(modifier = Modifier.height(20.dp))
 
@@ -215,7 +184,7 @@ private fun LoginPreview() {
             uiState = LoginUiState(),
             onEmailChange = {},
             onPasswordChange = {},
-            onSignUpClick = {},
+            navigateToSignup = {},
             onLoginClick = {},
         )
     }

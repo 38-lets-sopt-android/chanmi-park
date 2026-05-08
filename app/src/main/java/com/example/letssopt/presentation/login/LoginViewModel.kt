@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 sealed class LoginEvent {
-    object NavigateToMain : LoginEvent()
+    object NavigateToHome : LoginEvent()
     data class ShowToast(val message: String) : LoginEvent()
 }
 
@@ -30,17 +30,27 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
     init {
         if (userPreferences.isLoggedIn()) {
             viewModelScope.launch {
-                _event.send(LoginEvent.NavigateToMain)
+                _event.send(LoginEvent.NavigateToHome)
             }
         }
     }
 
     fun onEmailChange(email: String) {
-        _uiState.update { it.copy(email = email, isLoginEnabled = email.isNotBlank() && it.password.isNotBlank()) }
+        _uiState.update {
+            it.copy(
+                email = email,
+                isLoginEnabled = email.isNotBlank() && it.password.isNotBlank()
+            )
+        }
     }
 
     fun onPasswordChange(password: String) {
-        _uiState.update { it.copy(password = password, isLoginEnabled = it.email.isNotBlank() && password.isNotBlank()) }
+        _uiState.update {
+            it.copy(
+                password = password,
+                isLoginEnabled = it.email.isNotBlank() && password.isNotBlank()
+            )
+        }
     }
 
     fun login() {
@@ -55,7 +65,7 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
                 }
                 _uiState.value.email == savedId && _uiState.value.password == savedPw -> {
                     userPreferences.saveLoginState(true)
-                    _event.send(LoginEvent.NavigateToMain)
+                    _event.send(LoginEvent.NavigateToHome)
                 }
                 else -> {
                     _event.send(LoginEvent.ShowToast("아이디 또는 비밀번호가 일치하지 않습니다"))

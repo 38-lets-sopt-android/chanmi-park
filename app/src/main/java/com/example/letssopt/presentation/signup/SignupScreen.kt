@@ -1,14 +1,10 @@
 package com.example.letssopt.presentation.signup
 
-import android.content.Intent
-import android.os.Bundle
 import android.util.Patterns
 import android.widget.Toast
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -16,7 +12,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -28,32 +23,29 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.letssopt.core.designsystem.component.button.LetsButton
 import com.example.letssopt.core.designsystem.component.textfield.LetsLabeledTextField
 import com.example.letssopt.core.designsystem.theme.LetsTheme
+import com.example.letssopt.presentation.login.LoginViewModel
+import kotlinx.serialization.Serializable
 
-class SignupActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContent {
-            LetsTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    SignupScreen(
-                        modifier = Modifier.padding(innerPadding),
-                        onSignupComplete = { userId, userPw ->
-                            val resultIntent = Intent().apply {
-                                putExtra("userId", userId)
-                                putExtra("userPw", userPw)
-                            }
-                            setResult(RESULT_OK, resultIntent)
-                            finish()
-                        },
-                    )
-                }
-            }
+@Serializable
+data object Signup {}
+
+@Composable
+fun SignupRoute(
+    paddingValues: PaddingValues,
+    navigateBack: () -> Unit,
+    viewModel: LoginViewModel = viewModel(),
+){
+    SignupScreen(
+        modifier = Modifier.padding(paddingValues),
+        onSignupComplete = { userId, userPw ->
+            viewModel.saveSignUpInfo(userId, userPw)
+            navigateBack()
         }
-    }
+    )
 }
 
 @Composable
