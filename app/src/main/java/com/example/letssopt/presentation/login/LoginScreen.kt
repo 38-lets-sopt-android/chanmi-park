@@ -40,7 +40,7 @@ import com.example.letssopt.presentation.login.uistate.LoginUiState
 import kotlinx.serialization.Serializable
 
 @Serializable
-data object Login {}
+data object Login
 
 @Composable
 fun LoginRoute(
@@ -63,7 +63,7 @@ fun LoginRoute(
 
     LoginScreen(
         uiState = uiState,
-        onEmailChange = viewModel::onEmailChange,
+        onIdChange = viewModel::onIdChange,
         onPasswordChange = viewModel::onPasswordChange,
         navigateToSignup = navigateToSignup,
         onLoginClick = viewModel::login,
@@ -74,7 +74,7 @@ fun LoginRoute(
 @Composable
 private fun LoginScreen(
     uiState: LoginUiState,
-    onEmailChange: (String) -> Unit,
+    onIdChange: (String) -> Unit,
     onPasswordChange: (String) -> Unit,
     navigateToSignup: () -> Unit,
     onLoginClick: () -> Unit,
@@ -101,7 +101,7 @@ private fun LoginScreen(
         Spacer(modifier = Modifier.height(26.dp))
 
         Text(
-            text = "이메일로 로그인",
+            text = "아이디로 로그인",
             color = LetsTheme.colors.textPrimary,
             style = LetsTheme.typography.title.bold_20,
         )
@@ -109,10 +109,10 @@ private fun LoginScreen(
         Spacer(modifier = Modifier.height(36.dp))
 
         LetsLabeledTextField(
-            label = "이메일",
-            placeholder = "이메일 주소를 입력하세요",
-            value = uiState.email,
-            onValueChange = onEmailChange,
+            label = "아이디",
+            placeholder = "아이디를 입력하세요",
+            value = uiState.id,
+            onValueChange = onIdChange,
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
             keyboardActions = KeyboardActions(
                 onNext = { passwordFocusRequester.requestFocus() }
@@ -182,7 +182,7 @@ private fun LoginPreview() {
     LetsTheme {
         LoginScreen(
             uiState = LoginUiState(),
-            onEmailChange = {},
+            onIdChange = {},
             onPasswordChange = {},
             navigateToSignup = {},
             onLoginClick = {},

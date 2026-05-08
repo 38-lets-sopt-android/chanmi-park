@@ -35,11 +35,11 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    fun onEmailChange(email: String) {
+    fun onIdChange(id: String) {
         _uiState.update {
             it.copy(
-                email = email,
-                isLoginEnabled = email.isNotBlank() && it.password.isNotBlank()
+                id = id,
+                isLoginEnabled = id.isNotBlank() && it.password.isNotBlank()
             )
         }
     }
@@ -48,7 +48,7 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
         _uiState.update {
             it.copy(
                 password = password,
-                isLoginEnabled = it.email.isNotBlank() && password.isNotBlank()
+                isLoginEnabled = it.id.isNotBlank() && password.isNotBlank()
             )
         }
     }
@@ -63,7 +63,7 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
                 savedId == null || savedPw == null -> {
                     _event.send(LoginEvent.ShowToast("회원가입을 먼저 해주세요"))
                 }
-                _uiState.value.email == savedId && _uiState.value.password == savedPw -> {
+                _uiState.value.id == savedId && _uiState.value.password == savedPw -> {
                     userPreferences.saveLoginState(true)
                     _event.send(LoginEvent.NavigateToHome)
                 }

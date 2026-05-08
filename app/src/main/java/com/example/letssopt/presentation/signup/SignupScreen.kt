@@ -31,7 +31,7 @@ import com.example.letssopt.presentation.login.LoginViewModel
 import kotlinx.serialization.Serializable
 
 @Serializable
-data object Signup {}
+data object Signup
 
 @Composable
 fun SignupRoute(
@@ -53,11 +53,16 @@ fun SignupScreen(
     modifier: Modifier = Modifier,
     onSignupComplete: (String, String) -> Unit,
 ){
-    var emailText by remember { mutableStateOf("") }
+    var idText by remember { mutableStateOf("") }
     var passwordText by remember { mutableStateOf("") }
     var rePasswordText by remember { mutableStateOf("") }
+    var nameText by remember { mutableStateOf("") }
+    var emailText by remember { mutableStateOf("") }
+    var ageText by remember { mutableStateOf("") }
+    var partText by remember { mutableStateOf("") }
 
-    val isSignupEnabled = emailText.isNotEmpty() && passwordText.isNotEmpty() && rePasswordText.isNotEmpty()
+    val isSignupEnabled = listOf(idText, passwordText, rePasswordText, nameText, emailText, ageText, partText)
+        .all { it.isNotEmpty() }
     val context = LocalContext.current
     val scrollState = rememberScrollState()
 
@@ -89,10 +94,10 @@ fun SignupScreen(
         Spacer(modifier = Modifier.height(36.dp))
 
         LetsLabeledTextField(
-            label = "이메일",
-            placeholder = "이메일 주소를 입력하세요",
-            value = emailText,
-            onValueChange = { emailText = it },
+            label = "아이디",
+            placeholder = "아이디를 입력하세요",
+            value = idText,
+            onValueChange = { idText = it },
         )
 
         Spacer(modifier = Modifier.height(18.dp))
@@ -115,6 +120,42 @@ fun SignupScreen(
             isPassword = true,
         )
 
+        Spacer(modifier = Modifier.height(18.dp))
+
+        LetsLabeledTextField(
+            label = "이름",
+            placeholder = "이름을 입력하세요",
+            value = nameText,
+            onValueChange = { nameText = it },
+        )
+
+        Spacer(modifier = Modifier.height(18.dp))
+
+        LetsLabeledTextField(
+            label = "이메일",
+            placeholder = "이메일을 입력하세요",
+            value = emailText,
+            onValueChange = { emailText = it },
+        )
+
+        Spacer(modifier = Modifier.height(18.dp))
+
+        LetsLabeledTextField(
+            label = "나이",
+            placeholder = "나이를 입력하세요",
+            value = ageText,
+            onValueChange = { ageText = it },
+        )
+
+        Spacer(modifier = Modifier.height(18.dp))
+
+        LetsLabeledTextField(
+            label = "파트",
+            placeholder = "파트를 입력하세요",
+            value = partText,
+            onValueChange = { partText = it },
+        )
+
         Spacer(modifier = Modifier.weight(1f))
 
         LetsButton(
@@ -131,7 +172,7 @@ fun SignupScreen(
                         Toast.makeText(context, "비밀번호가 일치하지 않습니다", Toast.LENGTH_SHORT).show()
                     }
                     else -> {
-                        onSignupComplete(emailText, passwordText)
+                        onSignupComplete(idText, passwordText)
                         Toast.makeText(context, "회원가입이되었습니다", Toast.LENGTH_SHORT).show()
                     }
                 }

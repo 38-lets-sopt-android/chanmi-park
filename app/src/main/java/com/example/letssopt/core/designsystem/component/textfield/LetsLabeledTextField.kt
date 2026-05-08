@@ -2,7 +2,6 @@ package com.example.letssopt.core.designsystem.component.textfield
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.text.KeyboardActions
@@ -38,7 +37,7 @@ fun LetsLabeledTextField(
             color = LetsTheme.colors.textSecondary,
         )
 
-        Spacer(modifier = Modifier.height(4.dp))
+        Spacer(modifier = Modifier.height(3.dp))
 
         LetsTextField(
             modifier = Modifier,
@@ -60,7 +59,7 @@ private fun LetsTextFieldPreview(){
 
         LetsLabeledTextField(
             label = "로그인",
-            placeholder = "이메일 주소를 입력하세요",
+            placeholder = "아이디를 입력하세요",
             value = text,
             onValueChange = { text = it },
         )
