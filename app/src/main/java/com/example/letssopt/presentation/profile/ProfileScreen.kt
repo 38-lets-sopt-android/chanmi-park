@@ -1,5 +1,6 @@
 package com.example.letssopt.presentation.profile
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -48,10 +49,11 @@ private fun ProfileScreen(
     ageText: Int,
     partText: String,
     modifier: Modifier = Modifier,
-){
+) {
     Column(
         modifier = modifier
             .fillMaxSize()
+            .background(color = LetsTheme.colors.black)
             .padding(horizontal = 23.dp)
             .padding(top = 70.dp)
     ) {
