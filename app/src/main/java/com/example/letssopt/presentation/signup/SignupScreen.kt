@@ -14,6 +14,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -27,7 +29,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.letssopt.core.designsystem.component.button.LetsButton
 import com.example.letssopt.core.designsystem.component.textfield.LetsLabeledTextField
 import com.example.letssopt.core.designsystem.theme.LetsTheme
-import com.example.letssopt.presentation.login.LoginViewModel
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -37,13 +38,31 @@ data object Signup
 fun SignupRoute(
     paddingValues: PaddingValues,
     navigateBack: () -> Unit,
-    viewModel: LoginViewModel = viewModel(),
-){
+    viewModel: SignUpViewModel = viewModel(),
+) {
+    val uiState by viewModel.uiState.collectAsState()
+    val context = LocalContext.current
+
+    LaunchedEffect(uiState) {
+        when (uiState) {
+            is SignUpUiState.Success -> {
+                Toast.makeText(context, "회원가입이 되었습니다", Toast.LENGTH_SHORT).show()
+                viewModel.resetState()
+                navigateBack()
+            }
+            is SignUpUiState.Error -> {
+                Toast.makeText(context, (uiState as SignUpUiState.Error).message, Toast.LENGTH_SHORT).show()
+                viewModel.resetState()
+            }
+            else -> Unit
+        }
+    }
+
     SignupScreen(
         modifier = Modifier.padding(paddingValues),
-        onSignupComplete = { userId, userPw ->
-            viewModel.saveSignUpInfo(userId, userPw)
-            navigateBack()
+        isLoading = uiState is SignUpUiState.Loading,
+        onSignupComplete = { id, pw, name, email, age, part ->
+            viewModel.signUp(id, pw, name, email, age, part)
         }
     )
 }
@@ -51,8 +70,9 @@ fun SignupRoute(
 @Composable
 fun SignupScreen(
     modifier: Modifier = Modifier,
-    onSignupComplete: (String, String) -> Unit,
-){
+    isLoading: Boolean = false,
+    onSignupComplete: (id: String, pw: String, name: String, email: String, age: Int, part: String) -> Unit,
+) {
     var idText by remember { mutableStateOf("") }
     var passwordText by remember { mutableStateOf("") }
     var rePasswordText by remember { mutableStateOf("") }
@@ -172,8 +192,7 @@ fun SignupScreen(
                         Toast.makeText(context, "비밀번호가 일치하지 않습니다", Toast.LENGTH_SHORT).show()
                     }
                     else -> {
-                        onSignupComplete(idText, passwordText)
-                        Toast.makeText(context, "회원가입이되었습니다", Toast.LENGTH_SHORT).show()
+                        onSignupComplete(idText, passwordText, nameText, emailText, ageText.toIntOrNull() ?: 0, partText)
                     }
                 }
             },
@@ -188,7 +207,7 @@ fun SignupScreen(
 private fun SignupPreview(){
     LetsTheme {
         SignupScreen(
-            onSignupComplete = { _, _ -> }
+            onSignupComplete = { _, _, _, _, _, _ -> }
         )
     }
 }

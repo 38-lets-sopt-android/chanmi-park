@@ -1,8 +1,10 @@
 package com.example.letssopt.presentation.signup
 
-import androidx.lifecycle.ViewModel
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.letssopt.data.dto.signup.SignUpRequest
+import com.example.letssopt.data.local.UserPreferences
 import com.example.letssopt.data.remote.RetrofitClient
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -16,7 +18,9 @@ sealed class SignUpUiState {
     data class Error(val message: String) : SignUpUiState()
 }
 
-class SignUpViewModel : ViewModel() {
+class SignUpViewModel(application: Application) : AndroidViewModel(application) {
+    private val userPreferences = UserPreferences(application)
+
     private val _uiState = MutableStateFlow<SignUpUiState>(SignUpUiState.Idle)
     val uiState: StateFlow<SignUpUiState> = _uiState.asStateFlow()
 
@@ -40,6 +44,8 @@ class SignUpViewModel : ViewModel() {
             )
         }.onSuccess { response ->
             if (response.isSuccessful) {
+                userPreferences.saveSignUpInfo(loginId, password)
+                userPreferences.saveUserProfile(name, email, age, part)
                 _uiState.value = SignUpUiState.Success
             } else {
                 val message = response.body()?.message ?: "회원가입에 실패했습니다"

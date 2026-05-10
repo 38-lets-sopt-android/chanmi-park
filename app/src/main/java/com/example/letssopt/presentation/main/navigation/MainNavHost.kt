@@ -14,6 +14,8 @@ import com.example.letssopt.presentation.home.Home
 import com.example.letssopt.presentation.home.HomeRoute
 import com.example.letssopt.presentation.login.Login
 import com.example.letssopt.presentation.login.LoginRoute
+import com.example.letssopt.presentation.profile.Profile
+import com.example.letssopt.presentation.profile.ProfileRoute
 import com.example.letssopt.presentation.purchase.Purchase
 import com.example.letssopt.presentation.purchase.PurchaseRoute
 import com.example.letssopt.presentation.search.Search
@@ -79,7 +81,8 @@ fun MainNavHost(
 
         composable<Home> {
             HomeRoute(
-                modifier = Modifier
+                navigateToProfile = { navController.navigate(Profile) },
+                modifier = Modifier,
             )
         }
 
@@ -103,6 +106,12 @@ fun MainNavHost(
 
         composable<Collection> {
             CollectionRoute(
+                paddingValues = paddingValues,
+            )
+        }
+
+        composable<Profile> {
+            ProfileRoute(
                 paddingValues = paddingValues,
             )
         }

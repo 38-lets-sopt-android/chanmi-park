@@ -1,5 +1,6 @@
 package com.example.letssopt.presentation.home.component
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -18,8 +19,9 @@ import com.example.letssopt.core.designsystem.theme.LetsTheme
 
 @Composable
 fun HomeTopAppBar(
-    modifier: Modifier = Modifier
-){
+    onProfileClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -47,7 +49,9 @@ fun HomeTopAppBar(
         Icon(
             imageVector = ImageVector.vectorResource(R.drawable.ic_top_profile_24),
             contentDescription = null,
-            modifier = modifier.size(24.dp),
+            modifier = modifier
+                .size(24.dp)
+                .clickable { onProfileClick() },
             tint = LetsTheme.colors.textPrimary
         )
     }
@@ -57,6 +61,6 @@ fun HomeTopAppBar(
 @Composable
 private fun PreviewNewContent(){
     LetsTheme {
-        HomeTopAppBar()
+        HomeTopAppBar(onProfileClick = {})
     }
 }

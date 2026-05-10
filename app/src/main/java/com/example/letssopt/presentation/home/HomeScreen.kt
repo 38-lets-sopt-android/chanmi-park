@@ -30,15 +30,16 @@ data object Home {}
 
 @Composable
 fun HomeRoute(
+    navigateToProfile: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = viewModel(),
-){
+) {
     val uiState by viewModel.uiState.collectAsState()
 
     Scaffold(
         modifier = modifier,
         containerColor = LetsTheme.colors.background,
-        topBar = {HomeTopAppBar()}
+        topBar = { HomeTopAppBar(onProfileClick = navigateToProfile) }
     ) { innerPadding ->
         HomeScreen(
             uiState = uiState,
